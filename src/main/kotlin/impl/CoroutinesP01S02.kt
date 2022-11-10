@@ -1,5 +1,8 @@
 package impl
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import service.ServiceP01S02
 
 /**
@@ -14,6 +17,14 @@ class CoroutinesP01S02(
     private val repository: ServiceP01S02.Repository
 ) {
     fun readFromRepository(): List<String> {
-        TODO("Not yet implemented")
+        return runBlocking {
+            (0 until repository.rowCount)
+                .map {
+                    async {
+                        repository.read(index = it)
+                    }
+                }
+                .awaitAll()
+        }
     }
 }
