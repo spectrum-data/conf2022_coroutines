@@ -15,6 +15,15 @@ object CoroutinesP05S03 {
         deferredList: List<Deferred<String>>,
         count: Int
     ): List<String> {
-        TODO("Not yet implemented")
+        val result = mutableListOf<String>()
+        repeat(count) {
+            select {
+                deferredList.forEach {
+                    it.onAwait { result.add(it) }
+                }
+            }
+        }
+        return result
     }
+
 }
