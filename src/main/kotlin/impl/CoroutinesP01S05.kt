@@ -1,5 +1,6 @@
 package impl
 
+import impl.CoroutinesP06S01.safeLaunch
 import kotlinx.coroutines.*
 
 /**
@@ -15,6 +16,26 @@ object CoroutinesP01S05 {
         parallelism: Int,
         body: suspend () -> Unit
     ) {
-        TODO("Not yet implemented")
+        /** 1. в лоб на IO
+        withContext(Dispatchers.IO) {
+            launch { body() }
+        }
+        */
+
+        /**
+         * С лимитацией на IO
+         */
+        withContext(Dispatchers.IO.limitedParallelism(parallelism)) {
+            launch { body() }
+        }
+
+        /**
+         * Явный хак теста - тоже работает
+
+        withContext(newFixedThreadPoolContext(parallelism,"DefaultDispatcher-worker-")){
+            launch { body() }
+        }
+        */
     }
 }
+
