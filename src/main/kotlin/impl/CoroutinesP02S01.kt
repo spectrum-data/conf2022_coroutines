@@ -11,17 +11,22 @@ import service.ServiceP02S01
  * и при этом `counter` возвращал бы корректный результат.
  */
 object CoroutinesP02S01 {
+    @OptIn(DelicateCoroutinesApi::class)
     suspend fun executeAndSum(
         counter: ServiceP02S01.Counter,
         times: Int,
         body: suspend (i: Int) -> Int
     ) {
-        coroutineScope {
-            repeat(times) { i ->
-                launch {
-                    counter.add(body(i))
+        // Реализация ->
+        newSingleThreadContext("Single thread context").use { context ->
+            withContext(context) {
+                repeat(times) { i ->
+                    launch {
+                        counter.add(body(i))
+                    }
                 }
             }
         }
+        // <- Реализация
     }
 }

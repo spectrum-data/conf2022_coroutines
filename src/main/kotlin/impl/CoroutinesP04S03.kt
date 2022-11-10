@@ -17,6 +17,14 @@ object CoroutinesP04S03 {
         phoneFlow: Flow<String>,
         writer: ServiceP04S03.Writer
     ) {
-        TODO("Not yet implemented")
+        // Реализация ->
+        idFlow.zip(nameFlow) { id, name ->
+            Pair(id, name)
+        }.zip(phoneFlow) { (id, name), phone ->
+            "$id,$name,$phone"
+        }.collect { row ->
+            writer.write(row)
+        }
+        // <- Реализация
     }
 }

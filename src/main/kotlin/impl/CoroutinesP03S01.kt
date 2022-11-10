@@ -1,6 +1,7 @@
 package impl
 
 import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.consumeEach
 
 /**
  * Часть 3. Задание 1. Получение элементов из канала.
@@ -13,6 +14,12 @@ object CoroutinesP03S01 {
         channel: ReceiveChannel<Int>,
         body: suspend (Int) -> String
     ): List<String> {
-        TODO("Not yet implemented")
+        // Реализация ->
+        return buildList {
+            channel.consumeEach { element ->
+                add(body(element))
+            }
+        }
+        // <- Реализация
     }
 }

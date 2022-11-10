@@ -12,10 +12,22 @@ import kotlinx.coroutines.*
  * Подсказка: попробуйте применить обработчик исключений (handler).
  */
 object CoroutinesP06S02 {
+    @OptIn(DelicateCoroutinesApi::class)
     suspend fun safeLaunchAndJoin(
         onException: (message: String, suppressed: List<String>) -> Unit,
         body: suspend CoroutineScope.() -> Job
     ) {
-        TODO("Not yet implemented")
+        // Реализация ->
+        val handler = CoroutineExceptionHandler { _, exception ->
+            onException(
+                exception.message ?: "",
+                exception.suppressed.map { it.message ?: "" }
+            )
+        }
+        val job = GlobalScope.launch(handler) {
+            body()
+        }
+        job.join()
+        // <- Реализация
     }
 }

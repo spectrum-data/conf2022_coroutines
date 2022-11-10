@@ -2,6 +2,7 @@ package impl
 
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Часть 2. Задание 2. Синхронизация доступа.
@@ -12,15 +13,15 @@ import kotlinx.coroutines.launch
 object CoroutinesP02S02 {
     suspend fun executeAndSum(times: Int, body: suspend (i: Int) -> Int): Int {
         // Реализация ->
-        var counter = 0
+        val counter = AtomicInteger(0)
         coroutineScope {
             repeat(times) { i ->
                 launch {
-                    counter += body(i)
+                    counter.addAndGet(body(i))
                 }
             }
         }
-        return counter
+        return counter.get()
         // <- Реализация
     }
 }

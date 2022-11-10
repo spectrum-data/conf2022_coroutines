@@ -1,6 +1,8 @@
 package impl
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import service.ServiceP04S04
 
 /**
@@ -17,6 +19,14 @@ object CoroutinesP04S04 {
         humidityFlow: Flow<Int?>,
         renderer: ServiceP04S04.Renderer
     ) {
-        TODO("Not yet implemented")
+        // Реализация ->
+        temperatureFlow.filterNotNull().combine(
+            humidityFlow.filterNotNull()
+        ) { temperature, humidity ->
+            ServiceP04S04.Measurements(temperature, humidity)
+        }.collect { measurements ->
+            renderer.render(measurements)
+        }
+        // <- Реализация
     }
 }

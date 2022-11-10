@@ -15,6 +15,16 @@ object CoroutinesP06S01 {
         onException: (message: String) -> Unit = {},
         body: suspend () -> Unit
     ): Job {
-        TODO("Not yet implemented")
+        // Реализация ->
+        return launch {
+            try {
+                body()
+            } catch (e: CancellationException) {
+                onCancel(e.message ?: "Unknown error")
+            } catch (e: Throwable) {
+                onException(e.message ?: "Unknown error")
+            }
+        }
+        // <- Реализация
     }
 }

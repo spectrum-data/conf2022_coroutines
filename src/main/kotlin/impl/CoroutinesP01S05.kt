@@ -15,6 +15,14 @@ object CoroutinesP01S05 {
         parallelism: Int,
         body: suspend () -> Unit
     ) {
-        TODO("Not yet implemented")
+        // Реализация ->
+        withContext(Dispatchers.IO) {
+            repeat(parallelism) {
+                launch {
+                    body()
+                }
+            }
+        }
+        // <- Реализация
     }
 }

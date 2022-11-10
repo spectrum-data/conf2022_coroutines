@@ -18,6 +18,29 @@ object CoroutinesP03S03 {
         reader: ServiceP03S03.DataBaseReader,
         writer: ServiceP03S03.DataBaseWriter
     ) {
-        TODO("Not yet implemented")
+        // Реализация ->
+        val channel = Channel<ServiceP03S03.Record>()
+        withContext(Dispatchers.IO) {
+            repeat(writeParallelism) {
+                launch {
+                    channel.consumeEach { record ->
+                        writer.write(record)
+                    }
+                }
+            }
+            coroutineScope {
+                repeat(readParallelism) {
+                    launch {
+                        while (reader.hasNextRecord()) {
+                            reader.readNextRecordOrNull()?.let { record ->
+                                channel.send(record)
+                            }
+                        }
+                    }
+                }
+            }
+            channel.close()
+        }
+        // <- Реализация
     }
 }

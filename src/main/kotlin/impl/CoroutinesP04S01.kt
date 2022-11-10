@@ -15,6 +15,13 @@ object CoroutinesP04S01 {
         reader: ServiceP04S01.Reader,
         writer: ServiceP04S01.Writer
     ) {
-        TODO("Not yet implemented")
+        // Реализация ->
+        val flow = flow {
+            while (reader.hasNext()) {
+                emit(reader.next())
+            }
+        }
+        writer.writeFromFlow(flow)
+        // <- Реализация
     }
 }

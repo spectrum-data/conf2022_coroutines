@@ -15,6 +15,18 @@ object CoroutinesP05S03 {
         deferredList: List<Deferred<String>>,
         count: Int
     ): List<String> {
-        TODO("Not yet implemented")
+        // Реализация ->
+        return buildList {
+            repeat(count) {
+                select {
+                    deferredList.filter { !it.isCompleted }.forEach { deferred ->
+                        deferred.onAwait { message ->
+                            add(message)
+                        }
+                    }
+                }
+            }
+        }
+        // <- Реализация
     }
 }

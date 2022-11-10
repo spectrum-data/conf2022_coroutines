@@ -15,6 +15,7 @@ import kotlinx.coroutines.*
  * 2. `execute()` должна быть вызвана после `getQuery()`, и на вход получает результат выполнения `getQuery()`
  */
 object CoroutinesP01S04 {
+    @OptIn(DelicateCoroutinesApi::class)
     suspend fun exec(
         thread1Name: String,
         thread2Name: String,
@@ -22,6 +23,18 @@ object CoroutinesP01S04 {
         getQuery: suspend () -> String,
         execute: suspend (query: String) -> Unit
     ) {
-        TODO("Not yet implemented")
+        // Реализация ->
+        newSingleThreadContext(thread1Name).use { context1 ->
+            newSingleThreadContext(thread2Name).use { context2 ->
+                withContext(context1) {
+                    launch { prepare() }
+                    val query = withContext(context2) {
+                        getQuery()
+                    }
+                    launch { execute(query) }
+                }
+            }
+        }
+        // <- Реализация
     }
 }

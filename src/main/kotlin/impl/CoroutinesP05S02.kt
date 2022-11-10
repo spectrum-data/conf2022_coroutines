@@ -19,6 +19,15 @@ object CoroutinesP05S02 {
         processChannel: SendChannel<String>,
         logChannel: SendChannel<String>
     ) {
-        TODO("Not yet implemented")
+        // Реализация ->
+        messageChannel.consumeEach { message ->
+            select {
+                processChannel.onSend(message) {}
+                logChannel.onSend(message) {}
+            }
+        }
+        processChannel.close()
+        logChannel.close()
+        // <- Реализация
     }
 }

@@ -14,8 +14,12 @@ object CoroutinesP01S06 {
         log: ServiceP01S06.Log,
         body: suspend () -> Unit
     ) {
-        log.logBefore()
-        body()
-        log.logAfter()
+        // Реализация ->
+        withContext(Dispatchers.Unconfined) {
+            log.logBefore()
+            body()
+            log.logAfter()
+        }
+        // <- Реализация
     }
 }

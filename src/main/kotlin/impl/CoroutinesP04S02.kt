@@ -18,6 +18,20 @@ object CoroutinesP04S02 {
         writer: ServiceP04S02.Writer,
         limit: Int
     ) {
-        TODO("Not yet implemented")
+        // Реализация ->
+        flow.transform { element ->
+            element.split("[,;]".toRegex()).forEach {
+                emit(it)
+            }
+        }.map { element ->
+            element.filter { it.isDigit() }
+        }.filter { element ->
+            element.matches("[78]*9[0-9]{9}".toRegex())
+        }.map { element ->
+            element.takeLast(10)
+        }.take(limit).collect { phone ->
+            writer.write(phone)
+        }
+        // <- Реализация
     }
 }

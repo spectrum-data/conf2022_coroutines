@@ -2,6 +2,8 @@ package impl
 
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 /**
  * Часть 2. Задание 3. Синхронизация доступа.
@@ -11,15 +13,20 @@ import kotlinx.coroutines.launch
  */
 object CoroutinesP02S03 {
     suspend fun executeAndConcatenate(times: Int, body: suspend (i: Int) -> String): String {
+        // Реализация ->
         var accumulator = ""
+        val mutex = Mutex()
         coroutineScope {
             repeat(times) { i ->
                 launch {
                     val value = body(i)
+                    mutex.withLock {
                         accumulator += value
+                    }
                 }
             }
         }
         return accumulator
+        // <- Реализация
     }
 }
