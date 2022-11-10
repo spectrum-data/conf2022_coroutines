@@ -1,5 +1,8 @@
 package impl
 
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.withTimeout
+
 /**
  * Часть 1. Задание 3. Таймаут корутины.
  *
@@ -13,6 +16,12 @@ object CoroutinesP01S03 {
     private const val TIMEOUT_MESSAGE = "Too long body execution"
 
     suspend fun exec(body: suspend () -> String): String {
-        TODO("Not yet implemented")
+        return try {
+            withTimeout(timeMillis = TIMEOUT_MS) {
+                body()
+            }
+        } catch(e: TimeoutCancellationException) {
+            TIMEOUT_MESSAGE
+        }
     }
 }
