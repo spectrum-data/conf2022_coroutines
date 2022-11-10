@@ -4,6 +4,7 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.selects.select
+import kotlin.math.log
 
 /**
  * Часть 5. Задание 2. Выражение Select, отправка сообщений в запасной канал.
@@ -19,6 +20,13 @@ object CoroutinesP05S02 {
         processChannel: SendChannel<String>,
         logChannel: SendChannel<String>
     ) {
-        TODO("Not yet implemented")
+        messageChannel.consumeEach {  m ->
+            select {
+                processChannel.onSend(m){}
+                logChannel.onSend(m){}
+            }
+        }
+        processChannel.close()
+        logChannel.close()
     }
 }
