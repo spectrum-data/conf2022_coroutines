@@ -26,7 +26,7 @@ object CoroutinesP01S05 {
          * С лимитацией на IO
          */
         withContext(Dispatchers.IO.limitedParallelism(parallelism)) {
-            launch { body() }
+            repeat(parallelism) { launch { body() } }
         }
 
         /**
