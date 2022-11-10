@@ -1,6 +1,8 @@
 package impl
 
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import service.ServiceP02S01
 
 /**
@@ -17,9 +19,10 @@ object CoroutinesP02S01 {
         body: suspend (i: Int) -> Int
     ) {
         coroutineScope {
+            val mutex = Mutex()
             repeat(times) { i ->
                 launch {
-                    counter.add(body(i))
+                    mutex.withLock { counter.add(body(i)) }
                 }
             }
         }
