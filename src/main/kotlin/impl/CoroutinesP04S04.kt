@@ -1,7 +1,8 @@
 package impl
 
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.*
 import service.ServiceP04S04
+import java.security.MessageDigest
 
 /**
  * Часть 4. Задание 4. Комбинация потоков.
@@ -17,6 +18,10 @@ object CoroutinesP04S04 {
         humidityFlow: Flow<Int?>,
         renderer: ServiceP04S04.Renderer
     ) {
-        TODO("Not yet implemented")
+        temperatureFlow.filterNotNull().combine(humidityFlow.filterNotNull()){ t, h ->
+            ServiceP04S04.Measurements(t, h)
+        }.collect { m ->
+            renderer.render(m)
+        }
     }
 }
