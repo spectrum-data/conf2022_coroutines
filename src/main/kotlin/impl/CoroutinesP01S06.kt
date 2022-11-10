@@ -15,7 +15,9 @@ object CoroutinesP01S06 {
         body: suspend () -> Unit
     ) {
         log.logBefore()
-        body()
-        log.logAfter()
+        withContext(Dispatchers.Unconfined) {
+            body()
+            log.logAfter()
+        }
     }
 }
