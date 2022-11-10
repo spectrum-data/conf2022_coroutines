@@ -18,6 +18,29 @@ object CoroutinesP03S03 {
         reader: ServiceP03S03.DataBaseReader,
         writer: ServiceP03S03.DataBaseWriter
     ) {
-        TODO("Not yet implemented")
+        coroutineScope {
+            val readCtx = newFixedThreadPoolContext(readParallelism,"read")
+            val writeCtx = newFixedThreadPoolContext(writeParallelism, "write")
+            val input = produce(readCtx) {
+                repeat(readParallelism){
+                    launch {
+                        while(true) {
+                            val next = reader.readNextRecordOrNull()
+                            if(next == null) {
+                                break
+                            }
+                            send(next)
+                        }
+                    }
+                }
+            }
+            repeat(writeParallelism) {
+                launch(writeCtx){
+                    for(record in input ) {
+                        writer.write(record)
+                    }
+                }
+            }
+        }
     }
 }
