@@ -20,8 +20,27 @@ object CoroutinesP01S04 {
         thread2Name: String,
         prepare: suspend () -> Unit,
         getQuery: suspend () -> String,
-        execute: suspend (query: String) -> Unit
+        execute: suspend (query: String) -> Unit,
     ) {
-        TODO("Not yet implemented")
+        val context1 = newSingleThreadContext(name = thread1Name)
+        val context2 = newSingleThreadContext(name = thread2Name)
+
+        withContext(context2) {
+            val getQueryJob = async {
+                getQuery()
+            }
+            withContext(context1) {
+                launch {
+                    prepare()
+                }
+                launch {
+                    getQueryJob
+                        .await()
+                        .also {
+                            execute(it)
+                        }
+                }
+            }
+        }
     }
 }
