@@ -18,6 +18,20 @@ object CoroutinesP04S02 {
         writer: ServiceP04S02.Writer,
         limit: Int
     ) {
-        TODO("Not yet implemented")
+        flow.transform { current ->
+            val numberCandidates = current.split(',', ';').map { it.trim() }
+            for (numberCandidate in numberCandidates) {
+                val normalized = numberCandidate.filter { it.isDigit() }
+                val niner = normalized.indexOf('9')
+                if(niner >= 0 ){
+                    val normalized = normalized.substring(niner)
+                    if(normalized.length == 10){
+                        emit(normalized)
+                    }
+                }
+            }
+        }.take(limit).collect { phone ->
+            writer.write(phone)
+        }
     }
 }
