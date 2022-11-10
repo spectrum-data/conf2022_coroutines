@@ -1,6 +1,7 @@
 package impl
 
 import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Часть 1. Задание 4. Смена контекста.
@@ -15,6 +16,7 @@ import kotlinx.coroutines.*
  * 2. `execute()` должна быть вызвана после `getQuery()`, и на вход получает результат выполнения `getQuery()`
  */
 object CoroutinesP01S04 {
+    @OptIn(DelicateCoroutinesApi::class)
     suspend fun exec(
         thread1Name: String,
         thread2Name: String,
@@ -22,6 +24,18 @@ object CoroutinesP01S04 {
         getQuery: suspend () -> String,
         execute: suspend (query: String) -> Unit
     ) {
-        TODO("Not yet implemented")
+        coroutineScope {
+            val t1context = newSingleThreadContext(thread1Name)
+            val t2context = newSingleThreadContext(thread2Name)
+            launch(t1context){
+                prepare()
+            }
+            val query = async(t2context){
+                getQuery()
+            }
+            launch(t1context){
+                execute(query.await())
+            }
+        }
     }
 }
