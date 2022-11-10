@@ -1,6 +1,10 @@
 package impl
 
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlin.random.Random
 
 /**
  * Часть 3. Задание 1. Получение элементов из канала.
@@ -13,6 +17,34 @@ object CoroutinesP03S01 {
         channel: ReceiveChannel<Int>,
         body: suspend (Int) -> String
     ): List<String> {
-        TODO("Not yet implemented")
+        val result = mutableListOf<String>()
+        while (true) {
+            val next = kotlin.runCatching {  channel.receive() }
+            if(next.isFailure){
+                break
+            }
+            result.add(body(next.getOrThrow()))
+        }
+        return result
+        /*
+        return coroutineScope {
+            val stringChannel = produce {
+                for(i in channel){
+                    launch {
+                        delay(
+                            Random.nextLong(10)
+                        )
+                        send(body(i))
+                    }
+                }
+            }
+            val result = mutableListOf<String>()
+            for( s in stringChannel ){
+                result.add(s)
+            }
+            result
+        }
+
+         */
     }
 }
