@@ -1,5 +1,10 @@
 package impl
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.channels.toList
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import service.ServiceP01S02
 
 /**
@@ -13,7 +18,16 @@ import service.ServiceP01S02
 class CoroutinesP01S02(
     private val repository: ServiceP01S02.Repository
 ) {
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun readFromRepository(): List<String> {
-        TODO("Not yet implemented")
+        return runBlocking {
+            produce {
+                for (i in 0..repository.rowCount - 1) {
+                    launch {
+                        send(repository.read(i))
+                    }
+                }
+            }.toList()
+        }
     }
 }
